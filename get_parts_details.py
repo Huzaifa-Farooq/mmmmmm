@@ -56,7 +56,6 @@ def load_done_bids():
     
 
 def load_bids():
-    completed_bids = load_done_bids()
     df = pd.read_excel("parts_data.xlsx")
     global REF_DATA
     REF_DATA = {
@@ -65,7 +64,6 @@ def load_bids():
     }
 
     bids = df['U_ModelCode'].unique().tolist()
-    bids = [bid for bid in bids if bid not in completed_bids]
     return bids
 
 
@@ -362,6 +360,9 @@ all_bids = load_bids()
 chunk_size = math.ceil(len(all_bids) / 5)
 bids_patches = [all_bids[i:i + chunk_size] for i in range(0, len(all_bids), chunk_size)]
 bids = bids_patches[int(INSTANCE_INDEX)]
+
+completed_bids = load_done_bids()
+bids = [bid for bid in bids if bid not in completed_bids]
 
 logger.info(f"{len(bids)} BookIDs remaining...")
 
