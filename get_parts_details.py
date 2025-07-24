@@ -193,9 +193,16 @@ def get_parts_details(bid):
     # Access the main window by automation ID
     main_win = app.window(auto_id="frmViewer")
 
-    main_tree = main_win.child_window(auto_id="tvBook").children(control_type="TreeItem")[0]
+    # sometimes we have structure like this Top Section -> Section -> Sub Section
+    # In other cases it is Section -> Sub Section
+    main_sec_e = main_win.child_window(auto_id="tvBook")
+    main_sec_child_trees = main_sec_e.children(control_type="TreeItem")
+    main_tree = main_sec_child_trees[0]
+    sections = main_tree.children(control_type="TreeItem")
+    if not sections[0].children():
+        sections = main_sec_child_trees
 
-    for section in main_tree.children(control_type="TreeItem"):
+    for section in sections:
         section_text = section.window_text()
         logger.info(f"Section: {section_text}")
         section.expand()
