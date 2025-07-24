@@ -3,3 +3,4 @@ pandas
 loguru
 pillow
 mss
+openpyxl
