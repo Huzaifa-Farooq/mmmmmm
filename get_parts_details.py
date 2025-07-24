@@ -88,8 +88,8 @@ def save_image(img_path, main_win):
                 img = sct.grab(IMAGE_CORDINATES)
                 bmp = Image.frombytes("RGB", img.size, img.rgb)
                 bmp.save(img_path, "JPEG")
-    else:
-        exit(f"Image already exists: {img_path}")
+    # else:
+    #     exit(f"Image already exists: {img_path}")
 
 
 def get_clean_filename(section_text, sub_section_text, sgl_model_code, img_index=0):
