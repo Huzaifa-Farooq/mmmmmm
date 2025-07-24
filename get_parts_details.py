@@ -353,6 +353,12 @@ def kill_app():
     except:
         pass
 
+    try:
+        app = Application(backend="uia").connect(title_re=".*Viewer.*")
+        app.kill()
+    except:
+        pass
+
 
 INSTANCE_INDEX = os.getenv("INSTANCE_INDEX")
 
@@ -374,7 +380,15 @@ logger.info(f"{len(bids)} BookIDs remaining...")
 for bid in bids:
     logger.info(f"At bid: {bid}")
     try:
-        if navigate_to_bid(bid):
+        for i in range(5):
+            try:
+                r = navigate_to_bid(bid)
+                break
+            except Exception as e:
+                logger.error(f"Error while navigating to bid. {str(e)}")
+                kill_app()
+                continue
+        if r:
             get_parts_details(bid)
             mark_bid_as_done(bid)
         else:
