@@ -303,7 +303,7 @@ def get_parts_details(bid):
 def navigate_to_bid(bid):
     app_path = r"C:/Program Files (x86)/KLTD/GSPcLocal/GSPcLocalViewer.exe"
     app = Application(backend="uia").start(cmd_line=app_path)
-    time.sleep(2)
+    time.sleep(5)
     # Access the main window by automation ID
     main_win = app.window(auto_id="frmViewer")
     section = main_win.child_window(auto_id="tvBrowse")
