@@ -328,7 +328,7 @@ def navigate_to_bid(bid, instance_index):
         main_tree = section.child_window(title="KUBOTA_PAD", control_type="TreeItem")
 
     categories = main_tree.children(control_type="TreeItem")
-    if instance_index > 2:
+    if int(instance_index) > 2:
         categories = list(reversed(categories))
 
     for category in categories:
