@@ -200,6 +200,9 @@ def get_parts_details(bid):
     main_tree = main_sec_child_trees[0]
     sections = main_tree.children(control_type="TreeItem")
     if not sections[0].children() and not sections[0].children():
+        with open('two_level.txt', 'a') as f:
+            f.write(str(bid) + '\n')
+
         sections = main_sec_child_trees
 
     for section in sections:
