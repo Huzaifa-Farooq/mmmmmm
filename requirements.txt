@@ -1,0 +1,5 @@
+pywinauto
+pandas
+loguru
+pillow
+mss
