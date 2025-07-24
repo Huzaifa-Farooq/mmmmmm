@@ -311,7 +311,12 @@ def navigate_to_bid(bid):
     main_tree = section.child_window(title="KUBOTA-PAD KDG", control_type="TreeItem").child_window(title="KUBOTA_PAD", control_type="TreeItem")
     main_tree.expand()
 
-    main_tree = section.child_window(title="KUBOTA_PAD", control_type="TreeItem")
+    
+    try:
+        main_tree = section.child_window(title="KUBOTA_PAD", control_type="TreeItem")
+    except Exception as e:
+        time.sleep(5)
+        main_tree = section.child_window(title="KUBOTA_PAD", control_type="TreeItem")
 
     for category in main_tree.children(control_type="TreeItem"):
         category_text = category.window_text()
