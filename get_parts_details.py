@@ -387,6 +387,8 @@ bids = bids_patches[int(INSTANCE_INDEX)]
 
 completed_bids = load_done_bids()
 bids = [bid for bid in bids if bid not in completed_bids]
+if int(INSTANCE_INDEX) > 2:
+    bids = list(reversed(bids))
 
 logger.info(f"{len(bids)} BookIDs remaining...")
 
