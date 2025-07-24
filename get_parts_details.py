@@ -199,7 +199,7 @@ def get_parts_details(bid):
     main_sec_child_trees = main_sec_e.children(control_type="TreeItem")
     main_tree = main_sec_child_trees[0]
     sections = main_tree.children(control_type="TreeItem")
-    if not sections[0].children():
+    if not sections[0].children() and not sections[0].children():
         sections = main_sec_child_trees
 
     for section in sections:
