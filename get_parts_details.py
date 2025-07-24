@@ -310,7 +310,7 @@ def get_parts_details(bid):
     app.kill()
 
 
-def navigate_to_bid(bid):
+def navigate_to_bid(bid, instance_index):
     app_path = r"C:/Program Files (x86)/KLTD/GSPcLocal/GSPcLocalViewer.exe"
     app = Application(backend="uia").start(cmd_line=app_path)
     time.sleep(5)
@@ -321,14 +321,17 @@ def navigate_to_bid(bid):
     main_tree = section.child_window(title="KUBOTA-PAD KDG", control_type="TreeItem").child_window(title="KUBOTA_PAD", control_type="TreeItem")
     main_tree.expand()
 
-    
     try:
         main_tree = section.child_window(title="KUBOTA_PAD", control_type="TreeItem")
     except Exception as e:
         time.sleep(5)
         main_tree = section.child_window(title="KUBOTA_PAD", control_type="TreeItem")
 
-    for category in main_tree.children(control_type="TreeItem"):
+    categories = main_tree.children(control_type="TreeItem")
+    if instance_index > 2:
+        categories = list(reversed(categories))
+
+    for category in categories:
         category_text = category.window_text()
         logger.info(f"Category: {category_text}")
         category.expand()
@@ -392,7 +395,7 @@ for bid in bids:
     try:
         for i in range(5):
             try:
-                r = navigate_to_bid(bid)
+                r = navigate_to_bid(bid, INSTANCE_INDEX)
                 break
             except Exception as e:
                 logger.error(f"Error while navigating to bid. {str(e)}")
