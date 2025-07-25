@@ -247,7 +247,11 @@ def get_parts_details(bid):
                             table_parts_data = []
                         else:
                             raise ex
-                    next_button, is_btn_enabled = get_next_list_button(main_win)
+
+                    if not table_parts_data and 'frequently used items' in section_text.lower():
+                        next_button, is_btn_enabled = None, None
+                    else:
+                        next_button, is_btn_enabled = get_next_list_button(main_win)
                         
                     # with ThreadPoolExecutor(max_workers=3) as executor:
                     #     future_table = executor.submit(extract_table_data, main_win)
