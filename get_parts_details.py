@@ -1,4 +1,5 @@
 from pywinauto import Application, mouse, Desktop
+import pywinauto
 import pandas as pd
 import time
 import os
@@ -239,7 +240,13 @@ def get_parts_details(bid):
                 next_image_button, is_image_btn_enabled = None, None
                 # keep getting parts table data until the "Next List" button is enabled
                 while True:
-                    table_parts_data = extract_table_data(main_win)
+                    try:
+                        table_parts_data = extract_table_data(main_win)
+                    except pywinauto.findwindows.ElementNotFoundError as ex:
+                        if 'frequently used items' in section_text.lower():
+                            table_parts_data = []
+                        else:
+                            raise ex
                     next_button, is_btn_enabled = get_next_list_button(main_win)
                         
                     # with ThreadPoolExecutor(max_workers=3) as executor:
@@ -269,7 +276,7 @@ def get_parts_details(bid):
                     
                     if not is_btn_enabled:
                         break
-                
+
                 img_filename = get_clean_filename(section_text, sub_section_text, sgl_model_code, img_index)
                 img_path = os.path.join("images", img_filename)
                 save_image(img_path, main_win)
