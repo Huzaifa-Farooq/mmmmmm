@@ -286,7 +286,6 @@ def get_parts_details(bid):
                 save_image(img_path, main_win)
                 img_index += 1
 
-                logger.info(parts_data[0])
                 logger.info(f"{len(parts_data)} parts found in this section")
                 data = [
                     {
