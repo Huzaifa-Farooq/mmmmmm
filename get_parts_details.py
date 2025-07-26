@@ -150,7 +150,7 @@ def extract_table_data(main_win):
 
     # TODO - REMOVE
     if not parts_data:
-        exit("No parts data found, exiting...")
+        raise pywinauto.findwindows.ElementNotFoundError("No parts data found, exiting...")
 
     logger.info(f"Extracted {len(parts_data)} parts from the table.")
     return parts_data
