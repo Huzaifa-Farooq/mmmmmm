@@ -54,7 +54,7 @@ def load_done_bids():
             return set(line.strip() for line in f)
     except FileNotFoundError:
         return set()
-    
+
 
 def load_bids():
     df = pd.read_excel("parts_data.xlsx")
@@ -246,7 +246,8 @@ def get_parts_details(bid):
                         if 'frequently used items' in section_text.lower():
                             table_parts_data = []
                         else:
-                            raise ex
+                            with open('no_table.txt', 'a') as f:
+                                f.write(bid + '\n')
 
                     if not table_parts_data and 'frequently used items' in section_text.lower():
                         next_button, is_btn_enabled = None, None
