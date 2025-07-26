@@ -246,10 +246,11 @@ def get_parts_details(bid):
                         if 'frequently used items' in section_text.lower():
                             table_parts_data = []
                         else:
+                            table_parts_data = []
                             with open('no_table.txt', 'a') as f:
                                 f.write(bid + '\n')
 
-                    if not table_parts_data and 'frequently used items' in section_text.lower():
+                    if not table_parts_data:
                         next_button, is_btn_enabled = None, None
                     else:
                         next_button, is_btn_enabled = get_next_list_button(main_win)
