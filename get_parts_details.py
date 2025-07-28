@@ -420,7 +420,7 @@ for bid in bids:
     logger.info(f"At bid: {bid}")
     try:
         r = None
-        for i in range(2):
+        for i in range(5):
             try:
                 r = navigate_to_bid(bid, INSTANCE_INDEX, all_bids_len)
                 break
