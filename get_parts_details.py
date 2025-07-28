@@ -31,6 +31,15 @@ DONE_BID_FILE = "done_bids.txt"
 REF_DATA = {}
 IMAGE_CORDINATES = {}
 clean_name = re.compile(r'\/|\#|\*|\?|\:|\"|\<|\>|\||\+|\=|\;|\@|\$|\,')
+GLOBAL_COMPLETED_BIDS = 'globally_completed_bids.txt'
+
+
+def load_global_completed_bids():
+    if not os.path.exists(GLOBAL_COMPLETED_BIDS):
+        return []
+    
+    with open(GLOBAL_COMPLETED_BIDS, "r") as f:
+        return [line.strip() for line in f]
 
 
 def mark_bid_as_done(bid):
@@ -254,22 +263,6 @@ def get_parts_details(bid):
                         next_button, is_btn_enabled = None, None
                     else:
                         next_button, is_btn_enabled = get_next_list_button(main_win)
-                        
-                    # with ThreadPoolExecutor(max_workers=3) as executor:
-                    #     future_table = executor.submit(extract_table_data, main_win)
-                    #     # Check if the "Next List" button is enabled
-                    #     future_button = executor.submit(get_next_list_button, main_win)
-                    #     # check if the "Next Picture" button is enabled only if it's None
-                    #     if next_image_button is None and  is_image_btn_enabled is None:
-                    #         future_image_button = executor.submit(get_next_picture_button, main_win)
-                    #     else:
-                    #         future_image_button = None
-
-                    #     # Wait all to finish
-                    #     table_parts_data = future_table.result()
-                    #     next_button, is_btn_enabled = future_button.result()
-                    #     if future_image_button:
-                    #         next_image_button, is_image_btn_enabled = future_image_button.result()
 
                     parts_data.extend(table_parts_data)
 
@@ -322,7 +315,7 @@ def get_parts_details(bid):
     app.kill()
 
 
-def navigate_to_bid(bid, instance_index):
+def navigate_to_bid(bid, instance_index, all_bids_len):
     app_path = r"C:/Program Files (x86)/KLTD/GSPcLocal/GSPcLocalViewer.exe"
     app = Application(backend="uia").start(cmd_line=app_path)
     time.sleep(5)
@@ -340,7 +333,7 @@ def navigate_to_bid(bid, instance_index):
         main_tree = section.child_window(title="KUBOTA_PAD", control_type="TreeItem")
 
     categories = main_tree.children(control_type="TreeItem")
-    if int(instance_index) > 2:
+    if int(instance_index) > 2 and all_bids_len > 1000:
         categories = list(reversed(categories))
 
     for category in categories:
@@ -392,6 +385,22 @@ os.makedirs("images", exist_ok=True)
 os.makedirs("parts_database", exist_ok=True)
 
 all_bids = load_bids()
+globally_completed_bids = load_global_completed_bids()
+globally_completed_bids = [i for i in globally_completed_bids if i not in [
+"BKIDA5001",
+"BKIDA0033",
+"BKIDA0035",
+"BKIDA0036",
+"BKIDA0034",
+"BKIDA5124",
+"BKIDK0093",
+"BKIDA0020",
+"BKIDA5126",
+"BKIDK0391",
+"BKIDA0037",
+]]
+all_bids = [bid for bid in all_bids if bid not in globally_completed_bids]
+
 # divide bids to 5 batches and operate on INSTANCE_INDEX
 chunk_size = math.ceil(len(all_bids) / 5)
 bids_patches = [all_bids[i:i + chunk_size] for i in range(0, len(all_bids), chunk_size)]
@@ -399,17 +408,21 @@ bids = bids_patches[int(INSTANCE_INDEX)]
 
 completed_bids = load_done_bids()
 bids = [bid for bid in bids if bid not in completed_bids]
-if int(INSTANCE_INDEX) > 2:
+all_bids_len = len(all_bids)
+if int(INSTANCE_INDEX) > 2 and all_bids_len > 1000:
     bids = list(reversed(bids))
 
 logger.info(f"{len(bids)} BookIDs remaining...")
 
+err_count = 0
+
 for bid in bids:
     logger.info(f"At bid: {bid}")
     try:
-        for i in range(5):
+        r = None
+        for i in range(2):
             try:
-                r = navigate_to_bid(bid, INSTANCE_INDEX)
+                r = navigate_to_bid(bid, INSTANCE_INDEX, all_bids_len)
                 break
             except Exception as e:
                 logger.error(f"Error while navigating to bid. {str(e)}")
@@ -424,5 +437,9 @@ for bid in bids:
     except Exception as e:
         err = traceback.format_exc()
         logger.info(f"Error: {err}")
-        exit()
-        # kill_app()
+        err_count += 1
+        if err_count >= 3:
+            logger.error("Too many errors, exiting...")
+            exit()
+        
+        kill_app()
