@@ -386,19 +386,7 @@ os.makedirs("parts_database", exist_ok=True)
 
 all_bids = load_bids()
 globally_completed_bids = load_global_completed_bids()
-globally_completed_bids = [i for i in globally_completed_bids if i not in [
-"BKIDA5001",
-"BKIDA0033",
-"BKIDA0035",
-"BKIDA0036",
-"BKIDA0034",
-"BKIDA5124",
-"BKIDK0093",
-"BKIDA0020",
-"BKIDA5126",
-"BKIDK0391",
-"BKIDA0037",
-]]
+globally_completed_bids = [i for i in globally_completed_bids]
 all_bids = [bid for bid in all_bids if bid not in globally_completed_bids]
 
 # divide bids to 5 batches and operate on INSTANCE_INDEX
